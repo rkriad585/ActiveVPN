@@ -4,7 +4,7 @@ import os
 
 # --- Application Info ---
 APP_NAME = "ActiveVPN"
-VERSION = "2.2.1"
+VERSION = "2.2.2"
 AUTHOR = "rkriad585"
 
 # --- Paths ---

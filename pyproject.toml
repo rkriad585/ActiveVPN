@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "activevpn"
-version = "2.2.1"
+version = "2.2.2"
 description = "The Ultimate Network Privacy & VPN Detection Tool"
 readme = "README.md"
 requires-python = ">=3.8"
-license = { text = "MIT" }
+license = "MIT"
 authors = [{ name = "rkriad585", email = "rkriad585@gmail.com" }]
 keywords = ["vpn", "tor", "privacy", "network", "detection", "security", "dns-leak", "cli"]
 classifiers = [
@@ -17,7 +17,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: End Users/Desktop",
     "Intended Audience :: System Administrators",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: MacOS",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
