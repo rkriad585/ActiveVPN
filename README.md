@@ -1,197 +1,242 @@
-<div align="center">
+<p align="center">
+  <img src="logo/logo.svg" alt="ActiveVPN logo" height="150">
+</p>
 
-  <img src=".github/logo.svg" alt="ActiveVPN Logo" width="200" height="200">
+<h1 align="center">🛡️ ActiveVPN</h1>
 
-  # 🛡️ ActiveVPN
+<p align="center">
+  The Ultimate Network Privacy &amp; VPN Detection Tool
+</p>
 
-  **The Ultimate Network Privacy & VPN Detection Tool**
+<p align="center">
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.8%2B-blue.svg" alt="Python 3.8+"></a>
+  <a href="https://github.com/rkriad585/ActiveVPN/actions"><img src="https://img.shields.io/github/actions/workflow/status/rkriad585/ActiveVPN/ci.yml" alt="CI status"></a>
+  <!-- TODO: fill -- the CI badge only becomes live once the first workflow run completes on GitHub. -->
+  <a href="https://pypi.org/project/activevpn/"><img src="https://img.shields.io/pypi/v/activevpn" alt="PyPI version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT license"></a>
+  <a href="https://github.com/rkriad585"><img src="https://img.shields.io/badge/Made%20by-rkriad585-8e44ad" alt="Made by rkriad585"></a>
+</p>
 
-  [Report Bug](https://github.com/rkriad585/vpnActive/issues) · [Request Feature](https://github.com/rkriad585/vpnActive/issues)
+<p align="center">
+  ActiveVPN inspects your system's network interfaces, analyzes running processes, checks your
+  external IP against known hosting providers, and performs DNS leak tests &mdash; all in one
+  hacker-style terminal UI. It tells you whether your VPN is <em>actually</em> working.
+</p>
 
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
-  [![Rich](https://img.shields.io/badge/TUI-Rich-magenta.svg)](https://github.com/Textualize/rich)
+## Screenshot
 
-</div>
+<p align="center">
+  <img src="Screenshots/home.png" alt="home screen" width="80%">
+</p>
 
----
+<p align="center"><em>More screenshots: <a href="docs/screenshots.md">View all screenshots</a></em></p>
 
-## 📖 Introduction
+## Table of Contents
 
-**ActiveVPN** is a powerful, cross-platform terminal utility designed to verify your digital privacy status. Whether you are a privacy enthusiast, a sysadmin, or just a casual user, knowing if your VPN is *actually* working is crucial.
+- [Key Features](#key-features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Usage Examples](#usage-examples)
+- [Documentation](#documentation)
+- [Interface](#interface)
+- [Architecture](#architecture)
+- [Requirements](#requirements)
+- [Prerequisites](#prerequisites)
+- [Development](#development)
+- [Contributing](#contributing)
+- [Security](#security)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
 
-Unlike simple "What is my IP" websites, **ActiveVPN** dives deeper. It inspects your system's network interfaces, analyzes running processes, checks your external IP against known hosting providers, and performs DNS leak tests—all presented in a beautiful, hacker-style TUI (Terminal User Interface).
+## Key Features
 
-## 🚀 How It Works
+- **Deep scan** — detects VPNs via interface names, process names, and IP reputation in one pass.
+- **Tor detection** — specifically checks for active Tor services.
+- **External IP analysis** — queries public IP APIs and flags datacenter/hosting/proxy IPs.
+- **DNS leak detection** — compares your traffic IP with your DNS resolver IP.
+- **IPv6 leak check** — reports your external IPv6 address and warns when IPv6 may leak around a tunnel.
+- **Overall verdict** — combines every signal into a confidence score and a CLEAN / SUSPICIOUS / LIKELY VPN-PROXY / VPN DETECTED label.
+- **Kill switch** — terminates active VPN processes, with a `--kill-force` fallback.
+- **History & export** — automatically logs scans to `.scan_history.json`, viewable with `--history` and exportable as JSON, CSV, or TXT.
+- **Watch mode** — continuously re-scans at a configurable interval.
+- **Configurable** — patterns, colors, and API endpoints can be overridden with a JSON config file.
 
-ActiveVPN operates on three distinct layers to ensure accuracy:
+## Installation
 
-1.  **System Layer Inspection 💻**
-    *   It scans your operating system (Linux, Windows, macOS, Android/Termux) for network interfaces commonly used by VPN protocols (e.g., `tun0`, `wg0`, `ppp`).
-    *   It checks for active processes associated with VPN providers (e.g., `openvpn`, `wireguard`, `nordvpn`, `tor`).
+Requires **Python 3.8 or newer** and `pip`.
 
-2.  **External IP Analysis 🌍**
-    *   It queries external APIs to fetch your Public IP.
-    *   It analyzes the ISP (Internet Service Provider) name. If the ISP is a known Data Center (e.g., DigitalOcean, M247), it flags the connection as **"LIKELY VPN/PROXY"**.
-
-3.  **DNS Leak Detection 🕵️‍♂️**
-    *   It compares your Public IP with the IP address resolving your DNS queries. If they are different, it warns you, helping you identify potential DNS leaks where your ISP might still see your requests.
-
-## ✨ Features
-
-*   **🖥️ Beautiful TUI:** Built with the `rich` library for a modern, colorful, and easy-to-read terminal interface.
-*   **🐧 Cross-Platform:** Works seamlessly on Linux, macOS, Windows, and Android (via Termux).
-*   **🔎 Deep Scan:** Detects VPNs via Interface names, Process names, and IP reputation.
-*   **🧅 Tor Detection:** Specifically checks for active Tor services.
-*   **☠️ Kill Switch:** Built-in command to terminate running VPN processes instantly (with a `--kill-force` fallback).
-*   **📝 History Logging:** Automatically saves scan results to `.scan_history.json` for your records.
-*   **🚨 DNS Consistency:** Verifies if your DNS requests are being tunneled correctly.
-*   **🌍 IPv6 Leak Check:** Reports your external IPv6 address and warns if IPv6 could leak alongside a VPN tunnel.
-*   **🏷️ Overall Verdict:** Combines every signal into a single confidence score and verdict (CLEAN / SUSPICIOUS / LIKELY VPN / VPN DETECTED).
-*   **🔁 Watch Mode:** Continuously re-scans your network at a configurable interval.
-*   **📤 History Export:** Export past scans as JSON, CSV, or plain text.
-*   **⚙️ Config File:** Override patterns, colors, and API URLs without touching the code.
-
-## 📂 Project Structure
-
-Here is how **ActiveVPN** is organized:
-
-```text
-vpnActive/
-├── main.py               # 🚀 Entry point: The script you run to start the tool
-├── config.py             # ⚙️ Configuration: Settings, API URLs, and Colors
-├── requirements.txt      # 📦 Python dependencies
-├── pyproject.toml        # 🐍 Packaging & entry point config
-├── .scan_history.json    # 📄 Logs: Stores past scan results (Auto-generated)
-├── .github/              # 🚦 CI workflow + logo
-└── core/                 # 🧠 Core Logic Folder
-    ├── __init__.py       #    Package initializer
-    ├── logo.py           #    🎨 Generates the ASCII Art Banner
-    ├── help.py           #    ℹ️ Handles the Help Menu display
-    ├── detector.py       #    🕵️ Main Logic: Scans IPs, Interfaces & DNS
-    └── logger.py         #    💾 Handles saving data to JSON & exports
+```bash
+pip install activevpn
 ```
 
-## 🛠️ Installation & Usage
+Or install from source:
 
-### Prerequisites
-*   Python 3.8 or higher
-*   Pip (Python Package Manager)
-
-### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/rkriad585/vpnActive.git
-cd vpnActive
-```
-
-### Step 2: Install Dependencies
-```bash
+git clone https://github.com/rkriad585/ActiveVPN.git
+cd ActiveVPN
 pip install -r requirements.txt
-# Or manually:
-pip install psutil rich pyfiglet requests
 ```
 
-### Step 3: Run the Tool
+See [docs/installation.md](docs/installation.md) for platform-specific notes (Linux, macOS, Windows, Termux).
+
+## Quick Start
+
 ```bash
-python main.py
+# Run a full scan
+activevpn
 ```
 
-## 🎮 Command Usage Examples
+You should see a system check, an external IP analysis, a DNS consistency check, and an overall verdict.
 
-### 1. Standard Network Scan
-Performs a full check of interfaces, processes, and external IP.
+## Usage Examples
+
 ```bash
-python main.py
+# Standard network scan (interfaces, processes, IP, DNS)
+activevpn
+
+# Kill active VPN processes (requires admin/root)
+sudo activevpn --kill
+
+# Force-kill stubborn VPN processes
+sudo activevpn --kill-force
+
+# Show past scan results
+activevpn --history
+
+# Export scan history as CSV
+activevpn --export csv
+
+# Clear all saved history
+activevpn --clear-history
+
+# Continuously rescan every 30 seconds
+activevpn --watch 30
+
+# Verbose debug logging
+activevpn --debug
+
+# Show help
+activevpn --help
 ```
 
-### 2. Kill Active VPNs ☠️
-*Requires Administrator/Root privileges.* Attempts to terminate known VPN processes.
+Exit codes: `0` = no VPN detected, `1` = VPN/Tor/Proxy detected, `2` = offline or error. Full reference in [docs/cli.md](docs/cli.md).
+
+## Documentation
+
+| Doc | Description |
+| --- | --- |
+| [docs/getting-started.md](docs/getting-started.md) | First steps with ActiveVPN |
+| [docs/installation.md](docs/installation.md) | Install instructions for every platform |
+| [docs/usage.md](docs/usage.md) | Daily usage and examples |
+| [docs/cli.md](docs/cli.md) | Full command-line reference |
+| [docs/configuration.md](docs/configuration.md) | Config file and environment variables |
+| [docs/architecture.md](docs/architecture.md) | How the code is organized |
+| [docs/development.md](docs/development.md) | Building, testing, and packaging |
+| [docs/deployment.md](docs/deployment.md) | Running on servers and in containers |
+| [docs/faq.md](docs/faq.md) | Frequently asked questions |
+| [docs/troubleshooting.md](docs/troubleshooting.md) | Common issues and fixes |
+| [docs/screenshots.md](docs/screenshots.md) | All screenshots |
+
+## Interface
+
+ActiveVPN is a **command-line tool**. It is distributed as the `activevpn` console script (see `[project.scripts]` in `pyproject.toml`) and can also be launched with `python main.py`.
+
+When run without flags it performs a full scan and prints four sections:
+
+1. **System Internal Check** — detected VPN/Tor interfaces and processes.
+2. **External IP Analysis** — public IP, country, ISP/org, IPv4/IPv6, and a verdict.
+3. **DNS Consistency Check** — traffic IP vs. DNS resolver IP.
+4. **Overall Verdict** — confidence score (`0`&ndash;`100`) and label.
+
+The tool returns meaningful **exit codes** (`0`/`1`/`2`) so it can be used in scripts and CI.
+
+## Architecture
+
+```
+ActiveVPN/
+├── main.py               # Entry point + CLI (argparse) + rich TUI rendering
+├── config.py             # Settings: patterns, API URLs, colors, scoring
+├── pyproject.toml        # Packaging, metadata, console script
+├── requirements.txt      # Runtime dependencies
+├── .scan_history.json    # Scan history log (auto-generated)
+├── core/
+│   ├── __init__.py
+│   ├── logo.py           # ASCII banner generation (pyfiglet + rich)
+│   ├── help.py           # Help menu rendering
+│   ├── detector.py       # NetworkDetector: interfaces, processes, IP, DNS, IPv6, verdict, kill
+│   └── logger.py         # History persistence, load/clear, and export helpers
+├── tests/                # pytest suite (mocked psutil/requests)
+├── logo/                 # Brand logo
+└── docs/                 # Documentation
+```
+
+The flow: `main.run()` parses arguments &rarr; `NetworkDetector.scan_network()` collects system + online signals &rarr; `_compute_verdict()` scores them &rarr; `save_log()` persists the result &rarr; tables/panels are rendered with `rich`.
+
+See [docs/architecture.md](docs/architecture.md) for details.
+
+## Requirements
+
+| Requirement | Minimum |
+| --- | --- |
+| OS | Linux, macOS, Windows, or Android (Termux) |
+| Runtime | Python 3.8+ |
+| Network | Internet access for the public IP and DNS checks |
+
+No special hardware is required. `--kill` and `--kill-force` need administrator/root privileges.
+
+## Prerequisites
+
+- **Python 3.8+** — download from [python.org](https://www.python.org/) or your package manager.
+- **pip** — bundled with Python on modern installers.
+
+On Linux:
+
 ```bash
-# Linux/Mac
-sudo python main.py --kill
-
-# Windows (Run cmd as Admin)
-python main.py --kill
+sudo apt update && sudo apt install -y python3 python3-pip
 ```
 
-### 3. Help Menu ℹ️
-Displays all available commands and flags.
+On macOS (Homebrew):
+
 ```bash
-python main.py --help
+brew install python
 ```
 
-### 4. Scan History & Export 📊
-Shows past scans, exports them, or clears them.
+## Development
+
 ```bash
-python main.py --history
-python main.py --export csv        # json | csv | txt
-python main.py --clear-history
+# Clone and install dependencies
+git clone https://github.com/rkriad585/ActiveVPN.git
+cd ActiveVPN
+python -m venv .venv
+. .venv/bin/activate        # Windows: .venv\Scripts\Activate.ps1
+pip install -r requirements.txt pytest build twine
+
+# Run the test suite
+pytest -q
+
+# Build the distributable packages
+python -m build
+
+# Verify the built artifacts
+python -m twine check dist/*
 ```
 
-### 5. Watch Mode 🔁
-Continuously re-scans every N seconds (default 10). Press `Ctrl+C` to stop.
-```bash
-python main.py --watch 30
-```
+The CI workflow (`.github/workflows/ci.yml`) runs `pytest` on Ubuntu, Windows, and macOS with Python 3.8 and 3.12. See [docs/development.md](docs/development.md).
 
-### 6. Exit Codes 🤖
-Useful for scripting and automation.
-| Code | Meaning |
-| :-- | :-- |
-| `0` | No VPN detected (or clean exit) |
-| `1` | VPN / Tor / Proxy detected |
-| `2` | Offline, error, or invalid usage |
+## Contributing
 
-## ⚙️ Configuration
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for setup, branch rules, commit style, and the pull request workflow. All participants must follow the [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
-You can customize the tool by editing `config.py` **or** by creating an optional
-JSON config file (`.activevpn.json` in the project root, or any path via the
-`ACTIVEVPN_CONFIG` environment variable). Keys in the file must match the
-uppercase constants in `config.py`.
+## Security
 
-```json
-{
-  "VPN_INTERFACE_PATTERNS": ["tun", "tap", "wg"],
-  "VPN_PROCESS_NAMES": ["openvpn", "mullvad"],
-  "COLOR_SUCCESS": "bold cyan"
-}
-```
+If you find a security issue, please read [SECURITY.md](SECURITY.md) before reporting it. Do **not** open a public issue for vulnerabilities.
 
-*   **Add new VPNs:** Add process names to `VPN_PROCESS_NAMES` or interface prefixes to `VPN_INTERFACE_PATTERNS`.
-*   **Change Colors:** Modify the `COLOR_*` constants to theme the UI to your liking.
-*   **Change APIs:** Override `IP_API_URLS`, `DNS_LEAK_API_URL`, or the IP version endpoints.
+## License
 
-## 🤝 Contributing & Issues
+Distributed under the **MIT License**. See [LICENSE](LICENSE) for the full text.
 
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+## Acknowledgments
 
-1.  **Fork** the Project
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3.  **Commit** your Changes (`git commit -m 'Add some AmazingFeature'`)
-4.  **Push** to the Branch (`git push origin feature/AmazingFeature`)
-5.  Open a **Pull Request**
-
-Found a bug? [Open an Issue](https://github.com/rkriad585/vpnActive/issues) to help us fix it!
-
-## 🌐 Connect with Me
-
-If you like this project, feel free to connect!
-
-| Platform | Username | Link |
-| :--- | :--- | :--- |
-| **GitHub** | @rkriad585 | [github.com/rkriad585](https://github.com/rkriad585) |
-| **YouTube** | @rkriad585 | [youtube.com/@rkriad585](https://youtube.com/@rkriad585) |
-| **X (Twitter)** | @rk_riad585 | [x.com/rk_riad585](https://x.com/rk_riad585) |
-| **Facebook** | @rkriad585 | [facebook.com/rkriad585](https://facebook.com/rkriad585) |
-| **Instagram** | @rkriad585 | [instagram.com/rkriad585](https://instagram.com/rkriad585) |
-| **Threads** | @rkriad585 | [threads.net/@rkriad585](https://threads.net/@rkriad585) |
-| **Email** | rkriad585 | [mailto:rkriad585@gmail.com](mailto:rkriad585@gmail.com) |
-
-## 📜 License
-
-Distributed under the **MIT License**. See `LICENSE` for more information.
-
----
-<div align="center">
-  <sub>Built with ❤️ by rkriad585</sub>
-</div>
+- Built with [rich](https://github.com/Textualize/rich) for the terminal UI and [pyfiglet](https://github.com/pwaller/pyfiglet) for the ASCII banner.
+- Public IP and DNS data provided by the ip-api.com, ipinfo.io, ipapi.co, and ipify.org APIs.
+- Made with ❤️ by [rkriad585](https://github.com/rkriad585).

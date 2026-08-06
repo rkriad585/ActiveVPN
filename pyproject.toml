@@ -38,9 +38,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/rkriad585/vpnActive"
-Repository = "https://github.com/rkriad585/vpnActive"
-"Bug Tracker" = "https://github.com/rkriad585/vpnActive/issues"
+Homepage = "https://github.com/rkriad585/ActiveVPN"
+Repository = "https://github.com/rkriad585/ActiveVPN"
+"Bug Tracker" = "https://github.com/rkriad585/ActiveVPN/issues"
 
 [project.scripts]
 activevpn = "main:run"
