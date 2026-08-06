@@ -1,4 +1,4 @@
-# vpnActive/core/logo.py
+# ActiveVPN/core/logo.py
 import random
 from rich.console import Console
 from rich.panel import Panel

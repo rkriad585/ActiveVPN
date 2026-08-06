@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "activevpn"
+version = "2.2.0"
+description = "The Ultimate Network Privacy & VPN Detection Tool"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "rkriad585", email = "rkriad585@gmail.com" }]
+keywords = ["vpn", "tor", "privacy", "network", "detection", "security", "dns-leak", "cli"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: System :: Networking",
+]
+dependencies = [
+    "psutil>=5.9",
+    "rich>=13.0",
+    "pyfiglet>=0.8",
+    "requests>=2.28",
+]
+
+[project.urls]
+Homepage = "https://github.com/rkriad585/vpnActive"
+Repository = "https://github.com/rkriad585/vpnActive"
+"Bug Tracker" = "https://github.com/rkriad585/vpnActive/issues"
+
+[project.scripts]
+activevpn = "main:run"
+
+[tool.setuptools]
+py-modules = ["main", "config"]
+packages = ["core"]
