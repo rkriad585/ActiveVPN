@@ -55,7 +55,7 @@ chcp 65001
 
 ## My config file is ignored
 
-- The file must be named `.activevpn.json` in the current directory, or the path must be set with `ACTIVEVPN_CONFIG`.
+- The file must be named `config.json` under `~/.config/neostore/ActiveVPN/` (Linux), `%LOCALAPPDATA%\neostore\ActiveVPN\` (Windows), or set explicitly with `ACTIVEVPN_CONFIG`.
 - Keys must match `config.py` constants exactly (uppercase).
 - Only string, list, and boolean values are applied.
 
@@ -63,7 +63,7 @@ See [configuration.md](configuration.md).
 
 ## History shows old scans
 
-History accumulates across runs. Use `activevpn --clear-history` to wipe it, or delete `.scan_history.json`.
+History accumulates across runs. Use `activevpn --clear-history` to wipe it, or delete the history file in the data dir.
 
 ---
 

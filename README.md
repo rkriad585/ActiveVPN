@@ -57,7 +57,8 @@
 - **IPv6 leak check** — reports your external IPv6 address and warns when IPv6 may leak around a tunnel.
 - **Overall verdict** — combines every signal into a confidence score and a CLEAN / SUSPICIOUS / LIKELY VPN-PROXY / VPN DETECTED label.
 - **Kill switch** — terminates active VPN processes, with a `--kill-force` fallback.
-- **History & export** — automatically logs scans to `.scan_history.json`, viewable with `--history` and exportable as JSON, CSV, or TXT.
+- **History & export** — automatically logs scans to your platform's data directory, viewable with `--history` and exportable as JSON, CSV, or TXT.
+- **Library API** — importable as a Python package (`activevpn.scan()`, `NetworkDetector`, typed `ScanResult`), with silent mode and watch callbacks for developers.
 - **Watch mode** — continuously re-scans at a configurable interval.
 - **Configurable** — patterns, colors, and API endpoints can be overridden with a JSON config file.
 
@@ -155,22 +156,43 @@ The tool returns meaningful **exit codes** (`0`/`1`/`2`) so it can be used in sc
 ```
 ActiveVPN/
 ├── main.py               # Entry point + CLI (argparse) + rich TUI rendering
-├── config.py             # Settings: patterns, API URLs, colors, scoring
+├── config.py             # Legacy shim → re-exports activevpn.config
 ├── pyproject.toml        # Packaging, metadata, console script
 ├── requirements.txt      # Runtime dependencies
-├── .scan_history.json    # Scan history log (auto-generated)
-├── core/
-│   ├── __init__.py
+├── activevpn/            # The library (importable as a package)
+│   ├── __init__.py       # Public API: scan(), NetworkDetector, ScanResult, ...
+│   ├── config.py         # Config dataclass, platformdirs paths, load_config()
+│   ├── detector.py       # NetworkDetector + typed data model (ScanResult, Verdict, IPInfo, ...)
+│   ├── logger.py         # History persistence, load/clear, and export helpers
 │   ├── logo.py           # ASCII banner generation (pyfiglet + rich)
-│   ├── help.py           # Help menu rendering
-│   ├── detector.py       # NetworkDetector: interfaces, processes, IP, DNS, IPv6, verdict, kill
-│   └── logger.py         # History persistence, load/clear, and export helpers
+│   └── help.py           # Help menu rendering
+├── core/                 # Backward-compatible shim (deprecated, use activevpn)
 ├── tests/                # pytest suite (mocked psutil/requests)
 ├── logo/                 # Brand logo
 └── docs/                 # Documentation
 ```
 
 The flow: `main.run()` parses arguments &rarr; `NetworkDetector.scan_network()` collects system + online signals &rarr; `_compute_verdict()` scores them &rarr; `save_log()` persists the result &rarr; tables/panels are rendered with `rich`.
+
+## Using as a Library
+
+```python
+import activevpn
+
+# One-shot scan (silent — no TUI)
+result = activevpn.scan(console=None)
+print(result.verdict.label, result.verdict.score)   # CLEAN 0
+print(result.to_json())                             # serializable output
+
+# Programmatic configuration (stored under ~/.config/neostore/ActiveVPN/)
+cfg = activevpn.load_config()
+cfg.vpn_process_names.append("my-vpn-daemon")
+
+# Continuous watch with callbacks
+detector = activevpn.NetworkDetector(console=None, config=cfg)
+for r in detector.watch(interval=60, on_change=lambda r: print("Verdict changed!", r.verdict.label)):
+    pass
+```
 
 See [docs/architecture.md](docs/architecture.md) for details.
 

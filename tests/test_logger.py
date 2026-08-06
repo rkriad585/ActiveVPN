@@ -3,7 +3,8 @@ import os
 
 import pytest
 
-import core.logger as logger
+import activevpn.logger as logger
+from activevpn.detector import IPInfo, ProcessInfo, ScanResult, Verdict
 
 SAMPLE_SCAN = {
     "interfaces": ["tun0"],
@@ -15,6 +16,15 @@ SAMPLE_SCAN = {
     "ipv6": None,
     "verdict": {"score": 90, "label": "VPN DETECTED", "reasons": ["x"]},
 }
+
+SAMPLE_SCAN_RESULT = ScanResult(
+    interfaces=["tun0"],
+    vpn_processes=[ProcessInfo(pid=1, name="openvpn")],
+    public_ip=IPInfo(query="1.2.3.4", isp="Test ISP", country="Testland"),
+    dns_leak=__import__("activevpn.detector", fromlist=["DNSInfo"]).DNSInfo(ip="8.8.8.8"),
+    ipv4="1.2.3.4",
+    verdict=Verdict(score=90, label="VPN DETECTED", reasons=["x"]),
+)
 
 
 @pytest.fixture
@@ -31,6 +41,13 @@ def test_save_and_load_history(tmp_log):
     assert len(history) == 2
     assert history[0]["scan_results"]["public_ip"]["query"] == "1.2.3.4"
     assert history[0]["timestamp"]
+
+
+def test_save_scan_result_object(tmp_log):
+    assert logger.save_log(SAMPLE_SCAN_RESULT) is True
+    history = logger.load_history()
+    assert history[0]["scan_results"]["public_ip"]["query"] == "1.2.3.4"
+    assert history[0]["scan_results"]["verdict"]["label"] == "VPN DETECTED"
 
 
 def test_load_missing_history(tmp_log):

@@ -5,6 +5,21 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-08-06
+
+### Added
+
+- **Library API**: new importable `activevpn` package with a typed data model (`ScanResult`, `Verdict`, `IPInfo`, `DNSInfo`, `ProcessInfo`), a one-shot `activevpn.scan()`, silent mode (`console=None`), serializable results (`.to_dict()` / `.to_json()`), and a `watch()` generator with `on_scan` / `on_change` callbacks.
+- **Cross-platform config paths** via `platformdirs`: config now lives at `~/.config/neostore/ActiveVPN/config.json` (Linux), `%LOCALAPPDATA%\neostore\ActiveVPN` (Windows), or `~/Library/Application Support/neostore/ActiveVPN` (macOS). Scan history moved to the platform data directory.
+- Typed `Config` dataclass with `load_config()`, `save_config()`, and `resolve_config_path()`. File keys accept both snake_case field names and legacy uppercase constant names.
+- `core/` and top-level `config.py` kept as backward-compatible shims for existing imports.
+- Config test suite (`tests/test_config.py`).
+
+### Changed
+
+- Dependency added: `platformdirs>=3.0`.
+- Docs updated: README "Using as a Library" section, rewritten architecture guide, updated config/CLI/history references.
+
 ## [2.2.2] - 2026-08-06
 
 ### Changed
@@ -56,6 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automatic history logging to `.scan_history.json`.
 - DNS consistency check.
 
+[2.3.0]: https://github.com/rkriad585/ActiveVPN/releases/tag/v2.3.0
 [2.2.2]: https://github.com/rkriad585/ActiveVPN/releases/tag/v2.2.2
 [2.2.1]: https://github.com/rkriad585/ActiveVPN/releases/tag/v2.2.1
 [2.2.0]: https://github.com/rkriad585/ActiveVPN/releases/tag/v2.2.0

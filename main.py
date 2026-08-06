@@ -8,17 +8,17 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from core.detector import NetworkDetector
-from core.help import print_help
-from core.logger import (
+from activevpn.detector import NetworkDetector
+from activevpn.help import print_help
+from activevpn.logger import (
     clear_history,
     export_history,
     flatten_entry,
     load_history,
     save_log,
 )
-from core.logo import print_banner
-from config import (
+from activevpn.logo import print_banner
+from activevpn.config import (
     COLOR_SUCCESS,
     COLOR_WARNING,
     COLOR_DANGER,
@@ -72,20 +72,20 @@ def display_system_table(console, results):
     sys_table.add_column("Status", style="bold")
     sys_table.add_column("Details")
 
-    if results['interfaces']:
+    if results.interfaces:
         sys_table.add_row(
-            "Interface", f"[{COLOR_SUCCESS}]FOUND[/]", ", ".join(results['interfaces'])
+            "Interface", f"[{COLOR_SUCCESS}]FOUND[/]", ", ".join(results.interfaces)
         )
     else:
         sys_table.add_row("Interface", "[dim]None[/]", "-")
 
-    if results['vpn_processes']:
-        names = ", ".join([p['name'] for p in results['vpn_processes']])
+    if results.vpn_processes:
+        names = ", ".join([p.name for p in results.vpn_processes])
         sys_table.add_row("VPN Process", f"[{COLOR_SUCCESS}]ACTIVE[/]", names)
     else:
         sys_table.add_row("VPN Process", "[dim]None[/]", "-")
 
-    if results['tor_processes']:
+    if results.tor_processes:
         sys_table.add_row("Tor Process", f"[{COLOR_TITLE}]ACTIVE[/]", "Tor Service found")
     else:
         sys_table.add_row("Tor Process", "[dim]None[/]", "-")
@@ -95,57 +95,56 @@ def display_system_table(console, results):
 
 
 def display_ip_panel(console, results):
-    ip_data = results.get('public_ip')
+    ip_data = results.public_ip
 
     if not ip_data:
         console.print(f"[{COLOR_DANGER}]Could not fetch Public IP (Offline or blocked).[/]")
         return
 
-    verdict = results.get('verdict', {})
-    label = verdict.get('label', 'CLEAN')
+    label = results.verdict.label
     ip_panel_color = "green" if label == "CLEAN" else "yellow"
 
-    isp_name = (ip_data.get('isp') or ip_data.get('org') or "").lower()
+    isp_name = ip_data.provider.lower()
     suspicious_isps = ["digitalocean", "m247", "datacamp", "host", "cdn", "cloud", "akamai", "linode"]
     is_suspicious = any(s in isp_name for s in suspicious_isps)
 
     lines = [
-        f"[bold]Public IP:[/bold] {ip_data.get('query', ip_data.get('ip', '?'))}",
-        f"[bold]Country:[/bold]   {ip_data.get('country', '-')} ({ip_data.get('countryCode', '-')})",
-        f"[bold]ISP/Org:[/bold]   {ip_data.get('isp', '-')} / {ip_data.get('org', '-')}",
+        f"[bold]Public IP:[/bold] {ip_data.address}",
+        f"[bold]Country:[/bold]   {ip_data.country or '-'} ({ip_data.country_code or '-'})",
+        f"[bold]ISP/Org:[/bold]   {ip_data.isp or '-'} / {ip_data.org or '-'}",
     ]
 
-    if results.get('ipv4'):
-        lines.append(f"[bold]IPv4:[/bold]      {results['ipv4']}")
-    if results.get('ipv6'):
-        lines.append(f"[bold]IPv6:[/bold]      {results['ipv6']}")
-        if results.get('ipv4'):
+    if results.ipv4:
+        lines.append(f"[bold]IPv4:[/bold]      {results.ipv4}")
+    if results.ipv6:
+        lines.append(f"[bold]IPv6:[/bold]      {results.ipv6}")
+        if results.ipv4:
             console.print(
                 f"[{COLOR_WARNING}]  IPv6 is active. If your VPN only tunnels IPv4, "
                 f"traffic may leak over IPv6.[/]"
             )
 
-    if is_suspicious and ip_data.get('hosting') is None:
+    if is_suspicious and ip_data.hosting is None:
         lines.append("[bold]Verdict:[/bold]   [bold yellow]Likely Datacenter IP[/]")
-    elif ip_data.get('proxy'):
+    elif ip_data.proxy:
         lines.append("[bold]Verdict:[/bold]   [bold red]PROXY/VPN flagged by provider[/]")
-    elif ip_data.get('hosting'):
+    elif ip_data.hosting:
         lines.append("[bold]Verdict:[/bold]   [bold yellow]Hosting/Datacenter IP[/]")
     else:
         lines.append("[bold]Verdict:[/bold]   [bold yellow]Likely Residential ISP[/]")
 
-    lines.append(f"[bold]Source:[/bold]    {ip_data.get('source', 'unknown')}")
+    lines.append(f"[bold]Source:[/bold]    {ip_data.source or 'unknown'}")
     console.print(Panel("\n".join(lines), title="External IP Analysis", border_style=ip_panel_color))
 
 
 def display_dns(console, results):
-    dns_data = results.get('dns_leak')
-    ip_data = results.get('public_ip')
+    dns_data = results.dns_leak
+    ip_data = results.public_ip
     if not dns_data or not ip_data:
         return
 
-    dns_ip = dns_data.get('ip', 'Unknown')
-    traffic_ip = ip_data.get('query', ip_data.get('ip', 'Unknown'))
+    dns_ip = dns_data.ip or "Unknown"
+    traffic_ip = ip_data.address
 
     console.print(f"\n[bold underline]DNS Consistency Check:[/]")
     console.print(f"  • Your Traffic IP: [cyan]{traffic_ip}[/]")
@@ -163,10 +162,10 @@ def display_dns(console, results):
 
 
 def display_verdict(console, results):
-    verdict = results.get('verdict', {})
-    label = verdict.get('label', 'CLEAN')
-    score = verdict.get('score', 0)
-    reasons = verdict.get('reasons', [])
+    verdict = results.verdict
+    label = verdict.label
+    score = verdict.score
+    reasons = verdict.reasons
 
     color = VERDICT_COLORS.get(label, "bold white")
     filled = "#" * (score // 10)
@@ -198,11 +197,11 @@ def scan_once(console, detector):
         console.print(f"[dim italic]Scan results saved to {LOG_FILE}[/]")
     console.print("\n")
 
-    label = results.get('verdict', {}).get('label', 'CLEAN')
+    label = results.verdict.label
     if label != "CLEAN":
         return 1
-    if results.get('public_ip') is None and not (
-        results.get('interfaces') or results.get('vpn_processes') or results.get('tor_processes')
+    if results.public_ip is None and not (
+        results.interfaces or results.vpn_processes or results.tor_processes
     ):
         return 2
     return 0

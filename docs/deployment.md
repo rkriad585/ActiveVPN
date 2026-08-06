@@ -59,7 +59,7 @@ The image runs the `activevpn` entrypoint as a non-root user (`uid 10001`) with 
 
 - **`--kill` needs privileges.** In Docker (and many servers) the container runs as a non-root user, so killing host VPN processes is not possible from inside the container. `--kill` is intended for the host shell.
 - **Network access.** The IP/DNS checks need outbound internet. Air-gapped hosts will return exit code `2`.
-- **History is local.** Scan history lives in `.scan_history.json` inside the working directory; mount a volume if you want to persist it.
+- **History is local.** Scan history lives in the platform data directory (e.g. `~/.local/share/neostore/ActiveVPN/`); mount a volume there if you want to persist it.
 
 ---
 

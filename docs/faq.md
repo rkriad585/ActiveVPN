@@ -28,7 +28,7 @@ No, a normal scan does not. Only `--kill` and `--kill-force` require administrat
 
 ## Where is the history stored?
 
-In `.scan_history.json` in the current working directory. Manage it with `--history`, `--export`, and `--clear-history`.
+In `scan_history.json` inside your platform's data directory (e.g. `~/.local/share/neostore/ActiveVPN/` on Linux, `%LOCALAPPDATA%\neostore\ActiveVPN\` on Windows). Manage it with `--history`, `--export`, and `--clear-history`.
 
 ## Does it work on Android?
 

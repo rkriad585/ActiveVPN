@@ -9,22 +9,24 @@ How ActiveVPN is organized under the hood.
 - [Scan flow](#scan-flow)
 - [Verdict scoring](#verdict-scoring)
 - [History and export](#history-and-export)
+- [Using as a library](#using-as-a-library)
 
 ## File layout
 
 ```
 ActiveVPN/
 ├── main.py               # Entry point + CLI (argparse) + rich TUI rendering
-├── config.py             # Settings: patterns, API URLs, colors, scoring
+├── config.py             # Legacy shim → re-exports activevpn.config
 ├── pyproject.toml        # Packaging, metadata, console script
 ├── requirements.txt      # Runtime dependencies
-├── .scan_history.json    # Scan history log (auto-generated)
-├── core/
-│   ├── __init__.py       # Package marker
+├── activevpn/            # The library (importable as a package)
+│   ├── __init__.py       # Public API exports
+│   ├── config.py         # Config dataclass, platformdirs paths, load_config()
+│   ├── detector.py       # NetworkDetector + typed data model
+│   ├── logger.py         # History persistence and export helpers
 │   ├── logo.py           # ASCII banner generation (pyfiglet + rich)
-│   ├── help.py           # Help menu rendering
-│   ├── detector.py       # NetworkDetector: the main scanning logic
-│   └── logger.py         # History persistence and export helpers
+│   └── help.py           # Help menu rendering
+├── core/                 # Backward-compatible shim (deprecated, use activevpn)
 ├── tests/                # pytest suite (mocked psutil/requests)
 ├── logo/                 # Brand logo
 └── docs/                 # Documentation
@@ -35,32 +37,33 @@ ActiveVPN/
 | Module | Responsibility |
 | --- | --- |
 | `main.py` | Parses CLI flags, orchestrates the scan, renders tables/panels with `rich`, returns exit codes. |
-| `config.py` | Holds detection patterns, API endpoint lists, UI colors, and verdict scoring weights. Also loads user overrides from `.activevpn.json`. |
-| `core/detector.py` | `NetworkDetector` checks interfaces (`check_interfaces`), processes (`check_processes`), public IP with API failover (`get_public_ip_info`), DNS resolver (`check_dns_leak`), IPv4/IPv6 (`get_ipv4`/`get_ipv6`), computes the verdict (`_compute_verdict`), and kills VPN processes (`kill_vpn_services`). |
-| `core/logger.py` | Appends scans to `.scan_history.json`, loads history, clears it, and exports to JSON/CSV/TXT. |
-| `core/logo.py` | Renders the pyfiglet banner inside a `rich` panel. |
-| `core/help.py` | Renders the help menu and exit-code table. |
+| `activevpn/config.py` | Defines the typed `Config` dataclass and the user-facing paths via `platformdirs`: config at `~/.config/neostore/ActiveVPN/config.json` (Linux), `%LOCALAPPDATA%\neostore\ActiveVPN` (Windows), `~/Library/Application Support/neostore/ActiveVPN` (macOS). `load_config()` merges defaults + file overrides + inline overrides. |
+| `activevpn/detector.py` | `NetworkDetector` checks interfaces (`check_interfaces`), processes (`check_processes`), public IP with API failover (`get_public_ip_info`), DNS resolver (`check_dns_leak`), IPv4/IPv6 (`get_ipv4`/`get_ipv6`), computes the verdict (`_compute_verdict`), and kills VPN processes (`kill_vpn_services`). Exposes the typed model `ScanResult` / `Verdict` / `IPInfo` / `DNSInfo` / `ProcessInfo`, a one-shot `scan()` function, and a `watch()` generator with callbacks. |
+| `activevpn/logger.py` | Appends scans to the history JSON (in the data dir), loads history, clears it, and exports to JSON/CSV/TXT. `save_log()` accepts either a `ScanResult` or a dict. |
+| `activevpn/logo.py` | Renders the pyfiglet banner inside a `rich` panel. |
+| `activevpn/help.py` | Renders the help menu and exit-code table. |
+| `core/` | Deprecated shim that re-exports `activevpn.*` for backward compatibility. |
 
 ## Scan flow
 
 ```text
 run()                          # main.py
- ├─ print_banner()             # core/logo.py
- ├─ NetworkDetector(console)   # core/detector.py
+ ├─ print_banner()             # activevpn/logo.py
+ ├─ NetworkDetector(console)   # activevpn/detector.py
  ├─ scan_network()
- │   ├─ check_interfaces()     # psutil.net_if_addrs() vs VPN_INTERFACE_PATTERNS
- │   ├─ check_processes()      # psutil.process_iter() vs VPN/TOR_PROCESS_NAMES
- │   ├─ get_public_ip_info()   # tries IP_API_URLS in order until one succeeds
+ │   ├─ check_interfaces()     # psutil.net_if_addrs() vs vpn_interface_patterns
+ │   ├─ check_processes()      # psutil.process_iter() vs vpn/tor_process_names
+ │   ├─ get_public_ip_info()   # tries ip_api_urls in order until one succeeds
  │   ├─ check_dns_leak()       # edns.ip-api.com
  │   ├─ get_ipv4() / get_ipv6()# api.ipify.org / api6.ipify.org
  │   └─ _compute_verdict()     # weighted score + label
- ├─ save_log()                 # core/logger.py
+ ├─ save_log()                 # activevpn/logger.py
  └─ display tables/panels      # main.py (rich)
 ```
 
 ## Verdict scoring
 
-`_compute_verdict()` sums weights defined in `config.py`:
+`_compute_verdict()` sums weights from the active `Config` (defaults in `activevpn/config.py`):
 
 | Signal | Weight |
 | --- | --- |
@@ -81,7 +84,24 @@ The score is capped at 100 and mapped to a label:
 
 ## History and export
 
-Every scan is appended to `.scan_history.json` with an ISO timestamp. `core/logger.py` flattens each entry into CSV/TXT/JSON rows for `--export` and renders the table for `--history`.
+Every scan is appended to `scan_history.json` in the platform data directory (`~/.local/share/neostore/ActiveVPN/` on Linux, `%LOCALAPPDATA%\neostore\ActiveVPN\` on Windows). `activevpn/logger.py` flattens each entry into CSV/TXT/JSON rows for `--export` and renders the table for `--history`.
+
+## Using as a library
+
+```python
+import activevpn
+
+result = activevpn.scan(console=None)          # silent one-shot scan
+result.verdict.label                           # -> "CLEAN"
+result.to_json()                               # serializable dict/JSON
+
+cfg = activevpn.load_config()                  # merge file overrides
+cfg.vpn_process_names.append("my-vpn-daemon")
+
+detector = activevpn.NetworkDetector(console=None, config=cfg)
+for r in detector.watch(interval=30, on_change=lambda r: print(r.verdict.label)):
+    ...
+```
 
 ---
 

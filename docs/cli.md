@@ -18,7 +18,7 @@ activevpn [-h] [-k] [--kill-force] [--history] [--clear-history]
 
 ## Global behavior
 
-Run with no arguments to perform a full scan. The scan checks network interfaces, running processes, public IP and ISP reputation, IPv6, and DNS routing, then saves the result to `.scan_history.json`.
+Run with no arguments to perform a full scan. The scan checks network interfaces, running processes, public IP and ISP reputation, IPv6, and DNS routing, then saves the result to the history file in your platform's data directory.
 
 ## Options
 
@@ -28,7 +28,7 @@ Run with no arguments to perform a full scan. The scan checks network interfaces
 | `-k`, `--kill` | Attempt to gracefully terminate active VPN processes. Requires admin/root. |
 | `--kill-force` | Like `--kill`, but sends `SIGKILL` when a graceful stop times out (3s). |
 | `--history` | Show the last 20 saved scans as a table. |
-| `--clear-history` | Delete `.scan_history.json`. |
+| `--clear-history` | Delete the scan history file. |
 | `--export [FORMAT]` | Export all history. `FORMAT` is `json` (default), `csv`, or `txt`. Writes `activevpn_export_<timestamp>.<format>`. |
 | `--watch [SECONDS]` | Continuously rescan every `SECONDS` (default `10`). Press `Ctrl+C` to stop. |
 | `--debug` | Print verbose diagnostics, including which API endpoints are attempted. |

@@ -11,17 +11,27 @@ Tune ActiveVPN without touching the code.
 
 ## Config file location
 
-By default ActiveVPN looks for `.activevpn.json` in the current directory. Any key that matches an **uppercase constant in `config.py`** overrides its value. Supported value types are strings, lists, and booleans.
+ActiveVPN stores its config under the `neostore` namespace in your platform's user config directory:
 
-Example `.activevpn.json`:
+| Platform | Path |
+| --- | --- |
+| Linux | `~/.config/neostore/ActiveVPN/config.json` |
+| macOS | `~/Library/Application Support/neostore/ActiveVPN/config.json` |
+| Windows | `%LOCALAPPDATA%\neostore\ActiveVPN\config.json` |
+
+The file is auto-discovered on every run; you don't need to create it. Keys may use either the lowercase field names below or the legacy **uppercase constant names** from `config.py`. Supported value types are strings, lists, integers, and booleans.
+
+Example `config.json`:
 
 ```json
 {
-  "VPN_INTERFACE_PATTERNS": ["tun", "tap", "wg"],
-  "VPN_PROCESS_NAMES": ["openvpn", "mullvad", "nordvpn"],
-  "COLOR_SUCCESS": "bold cyan"
+  "vpn_interface_patterns": ["tun", "tap", "wg"],
+  "vpn_process_names": ["openvpn", "mullvad", "nordvpn"],
+  "color_success": "bold cyan"
 }
 ```
+
+A legacy `.activevpn.json` in the current working directory is still honored as a last resort (deprecated).
 
 ## Overridable settings
 
@@ -34,7 +44,7 @@ Example `.activevpn.json`:
 | `DNS_LEAK_API_URL` | string | `https://edns.ip-api.com/json` | DNS resolver endpoint. |
 | `IPV4_URLS` / `IPV6_URLS` | list | ipify / ipv6-test | IPv4 and IPv6 detection endpoints. |
 | `COLOR_SUCCESS` etc. | string | `bold green` | `rich` styles used in the UI. |
-| `LOG_FILE` | string | `.scan_history.json` | Where scan history is stored. |
+| `LOG_FILE` | string | `scan_history.json` in the data dir | Where scan history is stored. |
 
 ## Environment variable
 

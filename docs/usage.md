@@ -42,7 +42,7 @@ activevpn --history
 activevpn --clear-history
 ```
 
-History is stored in `.scan_history.json`.
+History is stored in `scan_history.json` inside your platform's data directory.
 
 ## Export
 

@@ -34,7 +34,7 @@ The scan prints four sections:
 3. **DNS Consistency Check** — whether your DNS resolver IP matches your traffic IP.
 4. **Overall Verdict** — a confidence score (`0`&ndash;`100`) and a label: `CLEAN`, `SUSPICIOUS`, `LIKELY VPN/PROXY`, or `VPN DETECTED`.
 
-Every scan is appended to `.scan_history.json`.
+Every scan is appended to `scan_history.json` in your platform's data directory.
 
 ## Next steps
 
