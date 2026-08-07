@@ -7,6 +7,7 @@ on:
       - 'docs/**'
       - 'mkdocs.yml'
       - 'pyproject.toml'
+      - '.github/workflows/docs.yml'
   workflow_dispatch:
 
 permissions:
@@ -35,6 +36,8 @@ jobs:
           cache-dependency-path: pyproject.toml
 
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Install docs dependencies
         run: |
