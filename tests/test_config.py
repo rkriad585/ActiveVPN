@@ -39,12 +39,11 @@ def test_config_from_legacy_uppercase_keys(tmp_path):
 
 def test_config_roundtrip_save_load(tmp_path):
     cfg = Config(score_tor_process=41, color_danger="bold red")
-    path = tmp_path / "config.json"
+    path = tmp_path / "config.toml"
     save_config(cfg, str(path))
 
-    with open(path, encoding="utf-8") as f:
-        raw = json.load(f)
-    assert raw["score_tor_process"] == 41
+    text = path.read_text(encoding="utf-8")
+    assert "score_tor_process = 41" in text
 
     loaded = load_config(custom=str(path))
     assert loaded.score_tor_process == 41
@@ -52,8 +51,8 @@ def test_config_roundtrip_save_load(tmp_path):
 
 
 def test_load_config_custom_overrides_file(tmp_path):
-    cfg_file = tmp_path / "cfg.json"
-    cfg_file.write_text(json.dumps({"score_proxy": 77}), encoding="utf-8")
+    cfg_file = tmp_path / "cfg.toml"
+    cfg_file.write_text("score_proxy = 77\n", encoding="utf-8")
     cfg = load_config(custom=str(cfg_file), overrides={"score_proxy": 88})
     assert cfg.score_proxy == 88
 
@@ -64,8 +63,8 @@ def test_load_config_inline_overrides_win(tmp_path):
 
 
 def test_resolve_config_path_env(monkeypatch, tmp_path):
-    cfg_file = tmp_path / "env.json"
-    cfg_file.write_text("{}", encoding="utf-8")
+    cfg_file = tmp_path / "env.toml"
+    cfg_file.write_text("", encoding="utf-8")
     monkeypatch.setenv("ACTIVEVPN_CONFIG", str(cfg_file))
     assert resolve_config_path() == str(cfg_file)
 
@@ -77,13 +76,27 @@ def test_resolve_config_path_explicit_custom(tmp_path):
     assert resolve_config_path(str(cfg_file)) == str(cfg_file)
 
 
-def test_load_config_file_invalid_json(tmp_path):
-    bad = tmp_path / "bad.json"
-    bad.write_text("{{{ not json", encoding="utf-8")
+def test_load_config_file_invalid_toml(tmp_path):
+    bad = tmp_path / "bad.toml"
+    bad.write_text("[[[ not toml", encoding="utf-8")
     assert load_config_file(str(bad)) == {}
+
+
+def test_load_config_file_legacy_json(tmp_path):
+    legacy = tmp_path / ".activevpn.json"
+    legacy.write_text(json.dumps({"SCORE_PROXY": 33}), encoding="utf-8")
+    assert load_config(custom=str(legacy)).score_proxy == 33
+
+
+def test_load_config_toml_uppercase_keys(tmp_path):
+    f = tmp_path / "c.toml"
+    f.write_text('SCORE_PROXY = 99\nCOLOR_SUCCESS = "bold cyan"\n', encoding="utf-8")
+    cfg = load_config(custom=str(f))
+    assert cfg.score_proxy == 99
+    assert cfg.color_success == "bold cyan"
 
 
 def test_paths_use_neostore_namespace():
     assert "neostore" in CONFIG_DIR.replace("\\", "/").lower().replace("_", "")
-    assert CONFIG_FILE.endswith("config.json")
+    assert CONFIG_FILE.endswith("config.toml")
     assert LOG_FILE.endswith("scan_history.json")

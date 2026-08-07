@@ -1,0 +1,43 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Rounded background squircle -->
+    <rect x="0" y="0" width="512" height="512" rx="100" fill="#0f172a" />
+
+    <!-- Network graph lines (top-left cluster) -->
+    <g stroke="#38bdf8" stroke-opacity="0.5" stroke-width="6" stroke-linecap="round">
+        <path d="M96 132H192" />
+        <path d="M96 132L140 204" />
+        <path d="M192 132L140 204" />
+    </g>
+
+    <!-- Network graph lines (bottom-right cluster) -->
+    <g stroke="#38bdf8" stroke-opacity="0.5" stroke-width="6" stroke-linecap="round">
+        <path d="M368 380H428" />
+        <path d="M368 380L404 320" />
+        <path d="M428 380L404 320" />
+    </g>
+
+    <!-- Network nodes -->
+    <g fill="#38bdf8">
+        <circle cx="96" cy="132" r="10" />
+        <circle cx="192" cy="132" r="10" />
+        <circle cx="140" cy="204" r="10" />
+        <circle cx="368" cy="380" r="10" />
+        <circle cx="428" cy="380" r="10" />
+        <circle cx="404" cy="320" r="10" />
+    </g>
+
+    <!-- Shield -->
+    <path d="M256 96C186 96 152 148 152 148V232C152 304 256 408 256 408C256 408 360 304 360 232V148C360 148 326 96 256 96Z"
+          stroke="#6366f1"
+          stroke-width="26"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          fill="none" />
+
+    <!-- Checkmark -->
+    <path d="M206 258L246 300L310 216"
+          stroke="#22c55e"
+          stroke-width="26"
+          stroke-linecap="round"
+          stroke-linejoin="round" />
+</svg>

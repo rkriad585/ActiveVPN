@@ -6,10 +6,17 @@ from typing import Any, Dict, List, Optional
 
 import platformdirs
 
+try:  # Python 3.11+
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover
+    import tomli as tomllib  # type: ignore
+
+import tomli_w
+
 # --- Application Info ---
 APP_NAME = "ActiveVPN"
 ORG_NAME = "neostore"
-VERSION = "2.3.0"
+VERSION = "2.4.0"
 AUTHOR = "rkriad585"
 
 # --- Paths ---
@@ -19,7 +26,7 @@ AUTHOR = "rkriad585"
 #   Windows: %LOCALAPPDATA%\neostore\ActiveVPN
 CONFIG_DIR = platformdirs.user_config_dir(APP_NAME, ORG_NAME)
 DATA_DIR = platformdirs.user_data_dir(APP_NAME, ORG_NAME)
-CONFIG_FILE = os.path.join(CONFIG_DIR, "config.json")
+CONFIG_FILE = os.path.join(CONFIG_DIR, "config.toml")
 LOG_FILE = os.path.join(DATA_DIR, "scan_history.json")
 
 # Legacy location kept for backward compatibility.
@@ -150,7 +157,7 @@ def resolve_config_path(custom: Optional[str] = None) -> Optional[str]:
     """Resolve which config file to load, by priority:
 
     1. ``$ACTIVEVPN_CONFIG`` environment variable (explicit path)
-    2. ``~/.config/neostore/ActiveVPN/config.json`` (or platform equivalent)
+    2. ``~/.config/neostore/ActiveVPN/config.toml`` (or platform equivalent)
     3. Legacy ``.activevpn.json`` in the current directory (deprecated)
 
     Returns None when no config file exists.
@@ -171,17 +178,33 @@ def resolve_config_path(custom: Optional[str] = None) -> Optional[str]:
     return None
 
 
+def _parse_config_text(text: str) -> Dict[str, Any]:
+    """Parse config text as TOML, falling back to legacy JSON syntax."""
+    try:
+        data = tomllib.loads(text)
+        if isinstance(data, dict):
+            return data
+    except ValueError:
+        pass  # Not valid TOML; try legacy JSON below.
+    try:
+        data = json.loads(text)
+        return data if isinstance(data, dict) else {}
+    except (json.JSONDecodeError, ValueError):
+        return {}
+
+
 def load_config_file(path: Optional[str] = None) -> Dict[str, Any]:
-    """Load raw overrides from a JSON config file. Returns {} on any failure."""
+    """Load raw overrides from a TOML config file (legacy JSON also accepted).
+    Returns {} on any failure."""
     resolved = resolve_config_path(path)
     if resolved is None:
         return {}
 
     try:
         with open(resolved, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        return data if isinstance(data, dict) else {}
-    except (json.JSONDecodeError, IOError, UnicodeDecodeError):
+            text = f.read()
+        return _parse_config_text(text)
+    except (IOError, UnicodeDecodeError):
         return {}
 
 
@@ -202,9 +225,9 @@ def load_config(custom: Optional[str] = None, overrides: Optional[Dict[str, Any]
 
 
 def save_config(config: Config, path: Optional[str] = None) -> str:
-    """Persist a Config to disk as JSON. Returns the path written."""
+    """Persist a Config to disk as TOML. Returns the path written."""
     target = path or config.config_file or CONFIG_FILE
     os.makedirs(os.path.dirname(target), exist_ok=True)
-    with open(target, "w", encoding="utf-8") as f:
-        json.dump(config.to_dict(), f, indent=4)
+    with open(target, "wb") as f:
+        tomli_w.dump(config.to_dict(), f)
     return target

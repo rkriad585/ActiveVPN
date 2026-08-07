@@ -43,4 +43,4 @@ Run with no arguments to perform a full scan. The scan checks network interfaces
 
 ---
 
-<a href="../README.md">← Back to README</a>
+<a href="../">← Back to Home</a>

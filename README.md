@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo/logo.svg" alt="ActiveVPN logo" height="150">
+  <img src="https://raw.githubusercontent.com/rkriad585/ActiveVPN/refs/heads/main/logo/logo.svg" alt="ActiveVPN logo" height="150">
 </p>
 
 <h1 align="center">🛡️ ActiveVPN</h1>
@@ -14,6 +14,7 @@
   <!-- TODO: fill -- the CI badge only becomes live once the first workflow run completes on GitHub. -->
   <a href="https://pypi.org/project/activevpn/"><img src="https://img.shields.io/pypi/v/activevpn" alt="PyPI version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT license"></a>
+  <a href="https://rkriad585.github.io/ActiveVPN"><img src="https://img.shields.io/badge/Docs-GitHub%20Pages-8e44ad" alt="Docs"></a>
   <a href="https://github.com/rkriad585"><img src="https://img.shields.io/badge/Made%20by-rkriad585-8e44ad" alt="Made by rkriad585"></a>
 </p>
 
@@ -26,10 +27,10 @@
 ## Screenshot
 
 <p align="center">
-  <img src="Screenshots/home.png" alt="home screen" width="80%">
+  <img src="https://raw.githubusercontent.com/rkriad585/ActiveVPN/refs/heads/main/Screenshots/home.png" alt="home screen" width="80%">
 </p>
 
-<p align="center"><em>More screenshots: <a href="docs/screenshots.md">View all screenshots</a></em></p>
+<p align="center"><em>More screenshots: <a href="https://github.com/rkriad585/ActiveVPN/tree/main/docs/screenshots.md">View all screenshots</a></em></p>
 
 ## Table of Contents
 
@@ -137,6 +138,7 @@ Exit codes: `0` = no VPN detected, `1` = VPN/Tor/Proxy detected, `2` = offline o
 | [docs/faq.md](docs/faq.md) | Frequently asked questions |
 | [docs/troubleshooting.md](docs/troubleshooting.md) | Common issues and fixes |
 | [docs/screenshots.md](docs/screenshots.md) | All screenshots |
+| [GitHub Pages](https://rkriad585.github.io/ActiveVPN) | Online documentation site |
 
 ## Interface
 
@@ -184,7 +186,7 @@ result = activevpn.scan(console=None)
 print(result.verdict.label, result.verdict.score)   # CLEAN 0
 print(result.to_json())                             # serializable output
 
-# Programmatic configuration (stored under ~/.config/neostore/ActiveVPN/)
+# Programmatic configuration (stored under ~/.config/neostore/ActiveVPN/config.toml)
 cfg = activevpn.load_config()
 cfg.vpn_process_names.append("my-vpn-daemon")
 

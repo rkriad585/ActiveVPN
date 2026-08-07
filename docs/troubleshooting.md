@@ -55,7 +55,7 @@ chcp 65001
 
 ## My config file is ignored
 
-- The file must be named `config.json` under `~/.config/neostore/ActiveVPN/` (Linux), `%LOCALAPPDATA%\neostore\ActiveVPN\` (Windows), or set explicitly with `ACTIVEVPN_CONFIG`.
+- The file must be named `config.toml` under `~/.config/neostore/ActiveVPN/` (Linux), `%LOCALAPPDATA%\neostore\ActiveVPN\` (Windows), or set explicitly with `ACTIVEVPN_CONFIG`.
 - Keys must match `config.py` constants exactly (uppercase).
 - Only string, list, and boolean values are applied.
 
@@ -67,4 +67,4 @@ History accumulates across runs. Use `activevpn --clear-history` to wipe it, or 
 
 ---
 
-<a href="../README.md">← Back to README</a>
+<a href="../">← Back to Home</a>

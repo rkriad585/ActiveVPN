@@ -40,4 +40,4 @@ Add your client's process name to `VPN_PROCESS_NAMES` or its interface prefix to
 
 ---
 
-<a href="../README.md">← Back to README</a>
+<a href="../">← Back to Home</a>

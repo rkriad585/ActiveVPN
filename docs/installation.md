@@ -75,4 +75,4 @@ You should see the banner and the help menu. See [getting-started.md](getting-st
 
 ---
 
-<a href="../README.md">← Back to README</a>
+<a href="../">← Back to Home</a>

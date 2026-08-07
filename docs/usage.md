@@ -101,4 +101,4 @@ For the full flag reference, see [cli.md](cli.md).
 
 ---
 
-<a href="../README.md">← Back to README</a>
+<a href="../">← Back to Home</a>

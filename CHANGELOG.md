@@ -5,6 +5,22 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2026-08-07
+
+### Added
+
+- **TOML config file**: the default config is now `config.toml` (still at `~/.config/neostore/ActiveVPN/`), parsed with the stdlib `tomllib` (Python 3.11+) or `tomli` (older Pythons) and written with `tomli-w`.
+- Dependencies: `tomli>=2.0; python_version<'3.11'` and `tomli-w>=1.0`.
+- **Automated documentation deployment**: MkDocs site built and deployed to GitHub Pages by GitHub Actions (`.github/workflows/docs.yml`), with a docs build check in CI.
+- **Automated container publishing**: `.github/workflows/docker-publish.yml` builds the image with Docker Buildx and pushes it to GitHub Container Registry (`ghcr.io/rkriad585/activevpn`) on version tags, `main` pushes, and manual dispatch.
+
+### Changed
+
+- `activevpn.config.save_config()` writes TOML; `load_config_file()` parses TOML with a JSON fallback so legacy `.activevpn.json` files keep loading.
+- Docs (configuration, architecture, troubleshooting) and README updated for the `config.toml` path.
+- Project URLs updated: `Documentation` points to the GitHub Pages site (`https://rkriad585.github.io/ActiveVPN`) and an `Author Website` entry added.
+- README logo and screenshot now use absolute raw GitHub URLs so they render on PyPI.
+
 ## [2.3.0] - 2026-08-06
 
 ### Added
@@ -71,6 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automatic history logging to `.scan_history.json`.
 - DNS consistency check.
 
+[2.4.0]: https://github.com/rkriad585/ActiveVPN/releases/tag/v2.4.0
 [2.3.0]: https://github.com/rkriad585/ActiveVPN/releases/tag/v2.3.0
 [2.2.2]: https://github.com/rkriad585/ActiveVPN/releases/tag/v2.2.2
 [2.2.1]: https://github.com/rkriad585/ActiveVPN/releases/tag/v2.2.1

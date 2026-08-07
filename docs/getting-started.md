@@ -44,4 +44,4 @@ Every scan is appended to `scan_history.json` in your platform's data directory.
 
 ---
 
-<a href="../README.md">← Back to README</a>
+<a href="../">← Back to Home</a>

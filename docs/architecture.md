@@ -37,7 +37,7 @@ ActiveVPN/
 | Module | Responsibility |
 | --- | --- |
 | `main.py` | Parses CLI flags, orchestrates the scan, renders tables/panels with `rich`, returns exit codes. |
-| `activevpn/config.py` | Defines the typed `Config` dataclass and the user-facing paths via `platformdirs`: config at `~/.config/neostore/ActiveVPN/config.json` (Linux), `%LOCALAPPDATA%\neostore\ActiveVPN` (Windows), `~/Library/Application Support/neostore/ActiveVPN` (macOS). `load_config()` merges defaults + file overrides + inline overrides. |
+| `activevpn/config.py` | Defines the typed `Config` dataclass and the user-facing paths via `platformdirs`: config at `~/.config/neostore/ActiveVPN/config.toml` (Linux), `%LOCALAPPDATA%\neostore\ActiveVPN` (Windows), `~/Library/Application Support/neostore/ActiveVPN` (macOS). `load_config()` merges defaults + file overrides + inline overrides. Config files are TOML (legacy `.activevpn.json` still loads via a JSON fallback). |
 | `activevpn/detector.py` | `NetworkDetector` checks interfaces (`check_interfaces`), processes (`check_processes`), public IP with API failover (`get_public_ip_info`), DNS resolver (`check_dns_leak`), IPv4/IPv6 (`get_ipv4`/`get_ipv6`), computes the verdict (`_compute_verdict`), and kills VPN processes (`kill_vpn_services`). Exposes the typed model `ScanResult` / `Verdict` / `IPInfo` / `DNSInfo` / `ProcessInfo`, a one-shot `scan()` function, and a `watch()` generator with callbacks. |
 | `activevpn/logger.py` | Appends scans to the history JSON (in the data dir), loads history, clears it, and exports to JSON/CSV/TXT. `save_log()` accepts either a `ScanResult` or a dict. |
 | `activevpn/logo.py` | Renders the pyfiglet banner inside a `rich` panel. |
@@ -105,4 +105,4 @@ for r in detector.watch(interval=30, on_change=lambda r: print(r.verdict.label))
 
 ---
 
-<a href="../README.md">← Back to README</a>
+<a href="../">← Back to Home</a>

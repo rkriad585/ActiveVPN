@@ -10,6 +10,7 @@ activevpn_export_*
 
 build/
 dist/
+site/
 *.egg-info/
 .venv/
 venv/

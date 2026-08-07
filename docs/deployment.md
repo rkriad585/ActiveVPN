@@ -63,4 +63,4 @@ The image runs the `activevpn` entrypoint as a non-root user (`uid 10001`) with 
 
 ---
 
-<a href="../README.md">← Back to README</a>
+<a href="../">← Back to Home</a>

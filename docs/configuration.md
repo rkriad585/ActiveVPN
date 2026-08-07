@@ -15,23 +15,21 @@ ActiveVPN stores its config under the `neostore` namespace in your platform's us
 
 | Platform | Path |
 | --- | --- |
-| Linux | `~/.config/neostore/ActiveVPN/config.json` |
-| macOS | `~/Library/Application Support/neostore/ActiveVPN/config.json` |
-| Windows | `%LOCALAPPDATA%\neostore\ActiveVPN\config.json` |
+| Linux | `~/.config/neostore/ActiveVPN/config.toml` |
+| macOS | `~/Library/Application Support/neostore/ActiveVPN/config.toml` |
+| Windows | `%LOCALAPPDATA%\neostore\ActiveVPN\config.toml` |
 
 The file is auto-discovered on every run; you don't need to create it. Keys may use either the lowercase field names below or the legacy **uppercase constant names** from `config.py`. Supported value types are strings, lists, integers, and booleans.
 
-Example `config.json`:
+Example `config.toml`:
 
-```json
-{
-  "vpn_interface_patterns": ["tun", "tap", "wg"],
-  "vpn_process_names": ["openvpn", "mullvad", "nordvpn"],
-  "color_success": "bold cyan"
-}
+```toml
+vpn_interface_patterns = ["tun", "tap", "wg"]
+vpn_process_names = ["openvpn", "mullvad", "nordvpn"]
+color_success = "bold cyan"
 ```
 
-A legacy `.activevpn.json` in the current working directory is still honored as a last resort (deprecated).
+A legacy `.activevpn.json` in the current working directory is still honored as a last resort (deprecated); existing JSON files load through a compatibility fallback.
 
 ## Overridable settings
 
@@ -51,7 +49,7 @@ A legacy `.activevpn.json` in the current working directory is still honored as 
 The config file path can be set with the `ACTIVEVPN_CONFIG` environment variable:
 
 ```bash
-ACTIVEVPN_CONFIG=/etc/activevpn/config.json activevpn
+ACTIVEVPN_CONFIG=/etc/activevpn/config.toml activevpn
 ```
 
 ## Scoring weights
@@ -68,4 +66,4 @@ The verdict score is the sum of the weights below (capped at 100). They can be o
 
 ---
 
-<a href="../README.md">← Back to README</a>
+<a href="../">← Back to Home</a>
