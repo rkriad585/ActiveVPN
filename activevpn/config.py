@@ -20,12 +20,15 @@ VERSION = "2.4.0"
 AUTHOR = "rkriad585"
 
 # --- Paths ---
-# Cross-platform user config/data directories.
+# Cross-platform user config/data directories under the `neostore` vendor
+# namespace. platformdirs drops `appauthor` on Unix, so the namespace is
+# appended manually to keep the path identical on every platform:
 #   Linux:  ~/.config/neostore/ActiveVPN   and   ~/.local/share/neostore/ActiveVPN
 #   macOS:  ~/Library/Application Support/neostore/ActiveVPN
 #   Windows: %LOCALAPPDATA%\neostore\ActiveVPN
-CONFIG_DIR = platformdirs.user_config_dir(APP_NAME, ORG_NAME)
-DATA_DIR = platformdirs.user_data_dir(APP_NAME, ORG_NAME)
+_APP_NAMESPACE = os.path.join(ORG_NAME, APP_NAME)
+CONFIG_DIR = os.path.join(platformdirs.user_config_dir("", ""), _APP_NAMESPACE)
+DATA_DIR = os.path.join(platformdirs.user_data_dir("", ""), _APP_NAMESPACE)
 CONFIG_FILE = os.path.join(CONFIG_DIR, "config.toml")
 LOG_FILE = os.path.join(DATA_DIR, "scan_history.json")
 
